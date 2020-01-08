@@ -15,7 +15,6 @@ namespace ConsoleApp11
     {
         public string IPAdd;
         public int Port;
-
         public void DownloadDeviceId()
         {
             IPAdd = "192.168.0.6";
@@ -32,8 +31,10 @@ namespace ConsoleApp11
                 Byte[] recBytes = client.Receive(ref rep);
                 Byte[] recBytes1 = client.Receive(ref rep1);
                 id.Rec = recBytes1;
+                RemoteEbs rem = new RemoteEbs();
+                rem.Rec = recBytes1;
                 Console.WriteLine("Nawiązano Połączenie");
-                id.Load();
+                rem.StartServer();
                 client.Close();
             }
             catch

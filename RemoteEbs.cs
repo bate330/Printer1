@@ -8,11 +8,8 @@ namespace ConsoleApp11
 {
     class RemoteEbs
     {
-        public string SerialNum;
-
-
+        public Byte[] Rec;
         TcpListener Server = null;
-
         public TcpListener Create(TcpListener serv)
         {
             // Set the TcpListener on port 13000.
@@ -25,7 +22,7 @@ namespace ConsoleApp11
 
         public void StartServer()
         {
-            Console.WriteLine(SerialNum);
+            //Console.WriteLine(SerialNum);
             TcpListener server = Create(Server);
             try
             {
@@ -60,21 +57,24 @@ namespace ConsoleApp11
 
                     // Process the data sent by the client.
                     data = data.ToUpper();
-                        byte[] answer = { 111, 107, 13 };
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                    // Send back a response.
-                    stream.Write(answer, 0, answer.Length);
-                        if (data == "{CMD")
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+                        // Send back a response.
+                        TDeviceId id = new TDeviceId();
+                        if (data == "{CMD1")
                         {
-                            Console.WriteLine("Sent: {0}", SerialNum);
+                            string SerialNumber = "";
+                            Console.WriteLine(id.SerialNumberMethod(ref SerialNumber, Rec));
+                            byte[] SerialNumberByte = ConvertStringToByte(SerialNumber);
+                            stream.Write(SerialNumberByte, 0, SerialNumberByte.Length);
                         }
-                        else
+                        else if(data == "{CMD2")
                         {
-                            Console.WriteLine("error");
+                            string NameLenght = "";
+                            Console.WriteLine(id.NameLengthMethod(ref NameLenght, Rec));
+                            byte[] NameLenghtByte = ConvertStringToByte(NameLenght);
+                            stream.Write(NameLenghtByte, 0, NameLenghtByte.Length);
                         }
-                }
-
+                    }
                 // Shutdown and end connection
                 client.Close();
             }
@@ -88,6 +88,22 @@ namespace ConsoleApp11
                 // Stop listening for new clients.
                 server.Stop();
             }
+        }
+        public byte[] ConvertStringToByte(string StringToByte)
+        {
+            char[] Chars = StringToByte.ToCharArray();
+            decimal[] Dec = new decimal[Chars.Length + 1];
+            byte[] Byte = new byte[Dec.Length];
+            for (int j = 0; j <= Chars.Length - 1; j++)
+            {
+                Dec[j] = Chars[j];
+            }
+            Dec[Chars.Length] = 13;
+            for (int j = 0; j <= Dec.Length - 1; j++)
+            {
+                Byte[j] = Convert.ToByte(Dec[j]);
+            }
+            return Byte;
         }
     }
 }

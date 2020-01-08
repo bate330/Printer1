@@ -10,8 +10,8 @@ namespace ConsoleApp11
     {
         static void Main(string[] args)
         {
-            RemoteEbs rem = new RemoteEbs();
-            rem.StartServer();
+            Printer pr = new Printer();
+            pr.DownloadDeviceId();
             Console.ReadKey();
         }
     }
